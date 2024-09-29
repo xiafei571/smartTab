@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM content loaded');
   const tabList = document.getElementById('tabList');
+  
+  // 添加错误处理
+  window.onerror = function(message, source, lineno, colno, error) {
+    console.error('An error occurred:', message, 'at', source, 'line', lineno);
+    return false;
+  };
   
   function updateStorage(categorizedTabs) {
     const allTabs = Object.entries(categorizedTabs).flatMap(([dateTimeCategory, domains]) => 
@@ -163,17 +170,33 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleButton.style.cursor = 'pointer';
         toggleButton.style.visibility = 'hidden'; // 初始状态为隐藏
 
+        const domainTitleWrapper = document.createElement('div');
+        domainTitleWrapper.style.display = 'flex';
+        domainTitleWrapper.style.alignItems = 'center';
+        domainTitleWrapper.style.flex = '1';
+
+        // 添加 favicon
+        const faviconElement = document.createElement('img');
+        faviconElement.src = `https://www.google.com/s2/favicons?domain=${domain}`;
+        faviconElement.className = 'favicon';
+        faviconElement.width = 16;
+        faviconElement.height = 16;
+        faviconElement.style.marginRight = '5px';
+        domainTitleWrapper.appendChild(faviconElement);
+
         const domainTitle = document.createElement('h3');
-        domainTitle.textContent = `${domain}`;
+        domainTitle.textContent = domain;
         domainTitle.style.margin = '0';
-        domainTitle.style.flex = '1';
+        domainTitleWrapper.appendChild(domainTitle);
 
         const tabCount = document.createElement('span');
         tabCount.textContent = `(${tabs.length})`;
         tabCount.style.marginLeft = '10px';
         tabCount.style.display = 'none'; // 初始状态隐藏
+        domainTitleWrapper.appendChild(tabCount);
 
-        domainTitle.appendChild(tabCount);
+        domainHeader.appendChild(toggleButton);
+        domainHeader.appendChild(domainTitleWrapper);
 
         const actionLinks = document.createElement('div');
         actionLinks.style.visibility = 'hidden'; // 初始状态为隐藏
@@ -222,8 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actionLinks.appendChild(clearLink);
         actionLinks.appendChild(checkmark);
 
-        domainHeader.appendChild(toggleButton);
-        domainHeader.appendChild(domainTitle);
         domainHeader.appendChild(actionLinks);
 
         domainLi.appendChild(domainHeader);
@@ -240,12 +261,15 @@ document.addEventListener('DOMContentLoaded', () => {
           tabLi.style.alignItems = 'center';
           tabLi.style.padding = '5px';
           tabLi.style.transition = 'all 0.3s ease';
+          tabLi.style.paddingLeft = '20px'; // 增加左侧缩进
 
           const contentWrapper = document.createElement('div');
           contentWrapper.style.flex = '1';
+
           const shortTitle = (tab.title || 'Untitled').slice(0, 15) + (tab.title.length > 15 ? '...' : '');
           
-          contentWrapper.appendChild(document.createTextNode(`- ${shortTitle}: `));
+          // 移除 "-" 符号，直接添加标题
+          contentWrapper.appendChild(document.createTextNode(`${shortTitle}: `));
           
           const link = document.createElement('a');
           link.href = tab.url;
@@ -327,6 +351,27 @@ document.addEventListener('DOMContentLoaded', () => {
       dateTimeLi.appendChild(domainList);
       tabList.appendChild(dateTimeLi);
     }
+  }
+
+  function createTabElement(tab) {
+    const tabElement = document.createElement('div');
+    tabElement.className = 'tab';
+
+    const faviconElement = document.createElement('img');
+    faviconElement.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
+    faviconElement.className = 'favicon';
+    faviconElement.width = 16;
+    faviconElement.height = 16;
+
+    const linkElement = document.createElement('a');
+    linkElement.href = tab.url;
+    linkElement.textContent = tab.title;
+    linkElement.target = '_blank';
+
+    tabElement.appendChild(faviconElement);
+    tabElement.appendChild(linkElement);
+
+    return tabElement;
   }
 
   chrome.storage.local.get(['closedTabs'], (result) => {

@@ -3,10 +3,19 @@
   "name": "Smart Tab",
   "version": "1.0",
   "description": "Opens a new tab with a list of closed tabs and closes all other tabs",
-  "permissions": ["tabs", "storage"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "sessions",
+    "background"
+  ],
+  "host_permissions": [
+    "https://www.google.com/"
+  ],
   "action": {},
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "web_accessible_resources": [
     {

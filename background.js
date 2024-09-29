@@ -1,5 +1,10 @@
 chrome.action.onClicked.addListener((tab) => {
-  chrome.tabs.query({}, (tabs) => {
+  handleTabSaving(true);
+});
+
+async function handleTabSaving(shouldOpenNewTab) {
+  console.log("Handling tab saving");
+  chrome.tabs.query({}, async (tabs) => {
     const currentTime = new Date();
     const timeCategory = getTimeCategory(currentTime);
     const formattedDate = formatDate(currentTime);
@@ -14,23 +19,28 @@ chrome.action.onClicked.addListener((tab) => {
         formattedDate: formattedDate
       }));
     
-    chrome.storage.local.get(['closedTabs'], (result) => {
-      let allClosedTabs = result.closedTabs || [];
-      
-      allClosedTabs = [...currentTabs, ...allClosedTabs];
-      
-      allClosedTabs = allClosedTabs.filter((tab, index, self) =>
-        index === self.findIndex((t) => t.url === tab.url)
-      );
+    console.log("Filtered current tabs:", currentTabs.length);
 
-      allClosedTabs = allClosedTabs.filter(tab => 
-        !tab.url.startsWith('chrome-extension://') && 
-        tab.url !== 'chrome://extensions/'
-      );
+    const result = await chrome.storage.local.get(['closedTabs']);
+    let allClosedTabs = result.closedTabs || [];
+    
+    allClosedTabs = [...currentTabs, ...allClosedTabs];
+    
+    allClosedTabs = allClosedTabs.filter((tab, index, self) =>
+      index === self.findIndex((t) => t.url === tab.url)
+    );
 
-      chrome.storage.local.set({ closedTabs: allClosedTabs }, () => {
-        console.log('All closed tabs information saved');
-        
+    allClosedTabs = allClosedTabs.filter(tab => 
+      !tab.url.startsWith('chrome-extension://') && 
+      tab.url !== 'chrome://extensions/'
+    );
+
+    console.log("Total tabs to save:", allClosedTabs.length);
+
+    chrome.storage.local.set({ closedTabs: allClosedTabs }, () => {
+      console.log('All closed tabs information saved');
+      
+      if (shouldOpenNewTab) {
         chrome.tabs.create({ url: 'closed_tabs.html' }, (newTab) => {
           const tabsToClose = tabs.filter(tab => 
             tab.id !== newTab.id && 
@@ -39,10 +49,10 @@ chrome.action.onClicked.addListener((tab) => {
           );
           chrome.tabs.remove(tabsToClose.map(tab => tab.id));
         });
-      });
+      }
     });
   });
-});
+}
 
 function getTimeCategory(date) {
   const hour = date.getHours();
