@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Tab Cleaner",
+  "name": "Smart Tab",
   "version": "1.0",
   "description": "Opens a new tab with a list of closed tabs and closes all other tabs",
   "permissions": ["tabs", "storage"],
@@ -13,5 +13,10 @@
       "resources": ["closed_tabs.html", "closed_tabs.js"],
       "matches": ["<all_urls>"]
     }
-  ]
+  ],
+  "icons": {
+    "16": "images/16.png",
+    "48": "images/48.png",
+    "128": "images/128.png"
+  }
 }
