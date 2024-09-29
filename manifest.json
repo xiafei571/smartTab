@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Tab Cleaner",
+  "version": "1.0",
+  "description": "Opens a new tab with a list of closed tabs and closes all other tabs",
+  "permissions": ["tabs", "storage"],
+  "action": {},
+  "background": {
+    "service_worker": "background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["closed_tabs.html", "closed_tabs.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
