@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM content loaded');
   const tabList = document.getElementById('tabList');
   
-  // 添加错误处理
   window.onerror = function(message, source, lineno, colno, error) {
-    console.error('An error occurred:', message, 'at', source, 'line', lineno);
     return false;
   };
   
@@ -18,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
       )
     );
     chrome.storage.local.set({ closedTabs: allTabs }, () => {
-      console.log('Updated tabs saved to storage');
       renderTabs(categorizedTabs);
     });
   }

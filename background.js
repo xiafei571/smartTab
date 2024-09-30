@@ -3,7 +3,6 @@ chrome.action.onClicked.addListener((tab) => {
 });
 
 async function handleTabSaving(shouldOpenNewTab) {
-  console.log("Handling tab saving");
   chrome.tabs.query({}, async (tabs) => {
     const currentTime = new Date();
     const timeCategory = getTimeCategory(currentTime);
@@ -18,8 +17,6 @@ async function handleTabSaving(shouldOpenNewTab) {
         timeCategory: timeCategory,
         formattedDate: formattedDate
       }));
-    
-    console.log("Filtered current tabs:", currentTabs.length);
 
     const result = await chrome.storage.local.get(['closedTabs']);
     let allClosedTabs = result.closedTabs || [];
@@ -35,11 +32,7 @@ async function handleTabSaving(shouldOpenNewTab) {
       !tab.url.startsWith('chrome://')
     );
 
-    console.log("Total tabs to save:", allClosedTabs.length);
-
     chrome.storage.local.set({ closedTabs: allClosedTabs }, () => {
-      console.log('All closed tabs information saved');
-      
       if (shouldOpenNewTab) {
         chrome.tabs.create({ url: 'closed_tabs.html' }, (newTab) => {
           const tabsToClose = tabs.filter(tab => 
