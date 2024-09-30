@@ -14,7 +14,7 @@ smartTab is a Chrome extension designed to enhance tab management, providing use
 
 ## Features
 
-1. **Automatic Tab Saving**: Saves tabs when they are closed.
+1. **Automatic Tab Saving**: Easily tidy up all your currently open tabs with a single click
 2. **Tab Restoration**: Easily reopen previously closed tabs.
 3. **Organized Tab List**: View closed tabs in a clean, organized list.
 4. **Individual Tab Deletion**: Remove specific tabs from the saved list.
