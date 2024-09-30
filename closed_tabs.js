@@ -111,6 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(dialog);
   }
 
+  function formatTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
   function renderTabs(categorizedTabs) {
     tabList.innerHTML = '';
     for (const [dateTimeCategory, domains] of Object.entries(categorizedTabs)) {
@@ -286,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
           rightWrapper.style.alignItems = 'center';
 
           const timeSpan = document.createElement('span');
-          timeSpan.textContent = new Date(tab.closedAt).toLocaleTimeString();
+          timeSpan.textContent = formatTime(tab.closedAt);  // 使用 formatTime 函数
           timeSpan.style.marginRight = '10px';
           rightWrapper.appendChild(timeSpan);
 
@@ -356,20 +361,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function createTabElement(tab) {
     const tabElement = document.createElement('div');
     tabElement.className = 'tab';
-
-    const faviconElement = document.createElement('img');
-    faviconElement.src = `https://www.google.com/s2/favicons?domain=${new URL(tab.url).hostname}`;
-    faviconElement.className = 'favicon';
-    faviconElement.width = 16;
-    faviconElement.height = 16;
-
-    const linkElement = document.createElement('a');
-    linkElement.href = tab.url;
-    linkElement.textContent = tab.title;
-    linkElement.target = '_blank';
-
-    tabElement.appendChild(faviconElement);
-    tabElement.appendChild(linkElement);
+    tabElement.innerHTML = `
+      <img src="${getFavicon(tab.url)}" alt="Favicon" class="favicon">
+      <div class="tab-info">
+        <a href="${tab.url}" target="_blank">${tab.title}</a>
+        <span class="close-time">${formatTime(tab.closedAt)}</span>
+      </div>
+      <button class="delete-btn">Delete</button>
+    `;
+    
+    // ... existing code ...
 
     return tabElement;
   }

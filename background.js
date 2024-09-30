@@ -10,7 +10,7 @@ async function handleTabSaving(shouldOpenNewTab) {
     const formattedDate = formatDate(currentTime);
     
     const currentTabs = tabs
-      .filter(tab => !tab.url.startsWith('chrome-extension://') && tab.url !== 'chrome://extensions/')
+      .filter(tab => !tab.url.startsWith('chrome-extension://') && !tab.url.startsWith('chrome://'))
       .map(tab => ({ 
         url: tab.url, 
         title: tab.title, 
@@ -32,7 +32,7 @@ async function handleTabSaving(shouldOpenNewTab) {
 
     allClosedTabs = allClosedTabs.filter(tab => 
       !tab.url.startsWith('chrome-extension://') && 
-      tab.url !== 'chrome://extensions/'
+      !tab.url.startsWith('chrome://')
     );
 
     console.log("Total tabs to save:", allClosedTabs.length);
@@ -45,7 +45,7 @@ async function handleTabSaving(shouldOpenNewTab) {
           const tabsToClose = tabs.filter(tab => 
             tab.id !== newTab.id && 
             !tab.url.startsWith('chrome-extension://') &&
-            tab.url !== 'chrome://extensions/'
+            !tab.url.startsWith('chrome://')
           );
           chrome.tabs.remove(tabsToClose.map(tab => tab.id));
         });
