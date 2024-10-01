@@ -1,3 +1,6 @@
+// 最多保留的类别数量
+const MAX_CATEGORIES_TO_KEEP = 996;
+
 document.addEventListener('DOMContentLoaded', () => {
   const tabList = document.getElementById('tabList');
   
@@ -391,6 +394,21 @@ document.addEventListener('DOMContentLoaded', () => {
       categorizedTabs[dateTimeCategory][domain].push(tab);
     });
     
-    renderTabs(categorizedTabs);
+    // 获取所有分类，并保留指定数量的最新类别
+    const allCategories = Object.keys(categorizedTabs);
+    const latestCategories = allCategories.slice(0, MAX_CATEGORIES_TO_KEEP);
+    const updatedCategorizedTabs = {};
+    latestCategories.forEach(category => {
+      updatedCategorizedTabs[category] = categorizedTabs[category];
+    });
+
+    // 更新存储
+    const updatedClosedTabs = Object.values(updatedCategorizedTabs).flatMap(domains => 
+      Object.values(domains).flat()
+    );
+
+    chrome.storage.local.set({ closedTabs: updatedClosedTabs }, () => {
+      renderTabs(updatedCategorizedTabs);
+    });
   });
 });
