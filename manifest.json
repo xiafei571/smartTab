@@ -5,12 +5,10 @@
   "description": "Opens a new tab with a list of closed tabs and closes all other tabs",
   "permissions": [
     "tabs",
-    "storage",
-    "sessions",
-    "background"
+    "storage"
   ],
   "host_permissions": [
-    "https://www.google.com/"
+    "https://www.google.com/s2/favicons?*"
   ],
   "action": {},
   "background": {
