@@ -34,13 +34,27 @@ async function handleTabSaving(shouldOpenNewTab) {
 
     chrome.storage.local.set({ closedTabs: allClosedTabs }, () => {
       if (shouldOpenNewTab) {
-        chrome.tabs.create({ url: 'closed_tabs.html' }, (newTab) => {
-          const tabsToClose = tabs.filter(tab => 
-            tab.id !== newTab.id && 
-            !tab.url.startsWith('chrome-extension://') &&
-            !tab.url.startsWith('chrome://')
-          );
-          chrome.tabs.remove(tabsToClose.map(tab => tab.id));
+        const closedTabsPageUrl = chrome.runtime.getURL('closed_tabs.html');
+        const closedTabsUrlPattern = `${closedTabsPageUrl}*`;
+
+        const openClosedTabsPage = () => {
+          chrome.tabs.create({ url: 'closed_tabs.html' }, (newTab) => {
+            const tabsToClose = tabs.filter(tab => 
+              tab.id !== newTab.id && 
+              !tab.url.startsWith('chrome-extension://') &&
+              !tab.url.startsWith('chrome://')
+            );
+            chrome.tabs.remove(tabsToClose.map(tab => tab.id));
+          });
+        };
+
+        chrome.tabs.query({ url: closedTabsUrlPattern }, (existingTabs) => {
+          const duplicateIds = existingTabs.map(tab => tab.id);
+          if (duplicateIds.length > 0) {
+            chrome.tabs.remove(duplicateIds, openClosedTabsPage);
+          } else {
+            openClosedTabsPage();
+          }
         });
       }
     });
