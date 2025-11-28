@@ -263,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
           tabLi.style.display = 'flex';
           tabLi.style.justifyContent = 'space-between';
           tabLi.style.alignItems = 'center';
+          tabLi.style.gap = '10px';
+          tabLi.style.flexWrap = 'nowrap';
           tabLi.style.padding = '5px';
           tabLi.style.transition = 'none';
           tabLi.style.paddingLeft = '20px'; // 增加左侧缩进
@@ -271,6 +273,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const contentWrapper = document.createElement('div');
           contentWrapper.style.flex = '1';
+          contentWrapper.style.minWidth = '0';
+          contentWrapper.style.overflow = 'hidden';
 
           const titleText = tab.title || 'Untitled';
           
